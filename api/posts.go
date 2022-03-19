@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -18,10 +19,27 @@ type PostResponse struct {
 	Content string `json:"content"`
 }
 
-type PostRequest struct {
+type AddPostRequest struct {
 	Author  string `json:"author"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
+}
+
+func (r *AddPostRequest) validate() url.Values {
+	errors := url.Values{}
+
+	if r.Author == "" {
+		errors.Add("author", "The author field is required")
+	}
+
+	if r.Title == "" {
+		errors.Add("title", "The title field is required")
+	}
+
+	if r.Content == "" {
+		errors.Add("content", "The content field is required")
+	}
+	return errors
 }
 
 func GetPosts(w http.ResponseWriter, r *http.Request) {
@@ -46,11 +64,19 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddPost(w http.ResponseWriter, r *http.Request) {
-	var post PostRequest
+	var post AddPostRequest
 
 	err := json.NewDecoder(r.Body).Decode(&post)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if errors := post.validate(); len(errors) > 0 {
+		err := map[string]interface{}{"validationError": errors}
+		w.Header().Set("Content-type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
