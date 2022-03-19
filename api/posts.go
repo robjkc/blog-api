@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/robjkc/blog-api/db"
 	"github.com/robjkc/blog-api/models"
 )
@@ -55,6 +57,23 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	err = models.AddPost(db.DbConn, post.Author, post.Title, post.Content)
 	if err != nil {
 		log.Println("Cannot add post", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
+func DeletePost(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	postId, err := strconv.Atoi(params["postId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = models.DeletePost(db.DbConn, postId)
+	if err != nil {
+		log.Println("Cannot delete post", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

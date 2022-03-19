@@ -35,3 +35,13 @@ func AddPost(con *db.DbConnection, author string, title string, content string) 
 
 	return nil
 }
+
+func DeletePost(con *db.DbConnection, postId int) error {
+	err := con.ExecuteUpdate(`delete from posts where id = :postId`,
+		db.Args{"postId": postId})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
