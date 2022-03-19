@@ -25,7 +25,30 @@ type AddPostRequest struct {
 	Content string `json:"content"`
 }
 
+type UpdatePostRequest struct {
+	Author  string `json:"author"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
 func (r *AddPostRequest) validate() url.Values {
+	errors := url.Values{}
+
+	if r.Author == "" {
+		errors.Add("author", "The author field is required")
+	}
+
+	if r.Title == "" {
+		errors.Add("title", "The title field is required")
+	}
+
+	if r.Content == "" {
+		errors.Add("content", "The content field is required")
+	}
+	return errors
+}
+
+func (r *UpdatePostRequest) validate() url.Values {
 	errors := url.Values{}
 
 	if r.Author == "" {
@@ -83,6 +106,39 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	err = models.AddPost(db.DbConn, post.Author, post.Title, post.Content)
 	if err != nil {
 		log.Println("Cannot add post", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
+func UpdatePost(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	postId, err := strconv.Atoi(params["postId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var request UpdatePostRequest
+
+	err = json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if errors := request.validate(); len(errors) > 0 {
+		err := map[string]interface{}{"validationError": errors}
+		w.Header().Set("Content-type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(err)
+		return
+	}
+
+	err = models.UpdatePost(db.DbConn, postId, request.Author, request.Title, request.Content)
+	if err != nil {
+		log.Println("Cannot update post", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

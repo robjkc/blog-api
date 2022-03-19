@@ -20,6 +20,7 @@ func main() {
 	r.HandleFunc("/", handler)
 	r.HandleFunc("/posts", api.GetPosts).Methods(http.MethodGet)
 	r.HandleFunc("/posts", api.AddPost).Methods(http.MethodPost)
+	r.HandleFunc("/post/{postId}", api.UpdatePost).Methods(http.MethodPut)
 	r.HandleFunc("/post/{postId}", api.DeletePost).Methods(http.MethodDelete)
 
 	log.Println("Listening for connections on port: 8080")
