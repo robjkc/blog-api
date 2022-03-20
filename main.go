@@ -16,16 +16,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", handler)
-	r.HandleFunc("/posts", api.GetPosts).Methods(http.MethodGet)
-	r.HandleFunc("/posts", api.AddPost).Methods(http.MethodPost)
-	r.HandleFunc("/post/{postId}", api.UpdatePost).Methods(http.MethodPut)
-	r.HandleFunc("/post/{postId}", api.DeletePost).Methods(http.MethodDelete)
+	router := mux.NewRouter()
+	router.Use(commonMiddleware)
+
+	router.HandleFunc("/", handler)
+	router.HandleFunc("/posts", api.GetPosts).Methods(http.MethodGet)
+	router.HandleFunc("/posts", api.AddPost).Methods(http.MethodPost)
+	router.HandleFunc("/post/{postId}", api.UpdatePost).Methods(http.MethodPut)
+	router.HandleFunc("/post/{postId}", api.DeletePost).Methods(http.MethodDelete)
 
 	log.Println("Listening for connections on port: 8080")
 
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(":8080", router)
 
 	/*
 		r.HandleFunc("/users/", listUsers).Methods(http.MethodGet)
@@ -40,4 +42,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	// vars is a dictionary whose key-value pairs are variables' name-value pairs.
 	fmt.Fprintf(w, "User %s\n", vars["userId"])
+}
+
+func commonMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
 }

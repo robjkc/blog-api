@@ -87,28 +87,31 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddPost(w http.ResponseWriter, r *http.Request) {
-	var post AddPostRequest
+	var request AddPostRequest
 
-	err := json.NewDecoder(r.Body).Decode(&post)
+	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if errors := post.validate(); len(errors) > 0 {
-		err := map[string]interface{}{"validationError": errors}
-		w.Header().Set("Content-type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err)
+	if errors := request.validate(); len(errors) > 0 {
+		onValidationError(errors, w)
 		return
 	}
 
-	err = models.AddPost(db.DbConn, post.Author, post.Title, post.Content)
+	err = models.AddPost(db.DbConn, request.Author, request.Title, request.Content)
 	if err != nil {
 		log.Println("Cannot add post", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+}
+
+func onValidationError(errors url.Values, w http.ResponseWriter) {
+	err := map[string]interface{}{"validationError": errors}
+	w.WriteHeader(http.StatusBadRequest)
+	json.NewEncoder(w).Encode(err)
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
@@ -129,10 +132,7 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if errors := request.validate(); len(errors) > 0 {
-		err := map[string]interface{}{"validationError": errors}
-		w.Header().Set("Content-type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(err)
+		onValidationError(errors, w)
 		return
 	}
 
