@@ -12,18 +12,27 @@ import (
 	"github.com/robjkc/blog-api/models"
 )
 
-type PostResponse struct {
+type GetPostsResponse struct {
 	ID      int    `json:"id"`
 	Author  string `json:"author"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
 }
 
-type SinglePostResponse struct {
-	ID      int    `json:"id"`
-	Author  string `json:"author"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
+type GetPostResponse struct {
+	ID       int               `json:"id"`
+	Author   string            `json:"author"`
+	Title    string            `json:"title"`
+	Content  string            `json:"content"`
+	Comments []CommentResponse `json:"comments"`
+}
+
+type CommentResponse struct {
+	ID              int    `json:"id"`
+	PostID          int    `json:"post_id"`
+	ParentCommentID int    `json:"parent_comment_id"`
+	Author          string `json:"author"`
+	Content         string `json:"content"`
 }
 
 type AddPostRequest struct {
@@ -80,13 +89,13 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Request failed!", http.StatusNoContent)
 	}
 
-	response := []PostResponse{}
+	responses := []GetPostsResponse{}
 
 	for _, post := range posts {
-		response = append(response, PostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content})
+		responses = append(responses, GetPostsResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content})
 	}
 
-	json, err := json.Marshal(response)
+	json, err := json.Marshal(responses)
 	if err != nil {
 		http.Error(w, "Request failed!", http.StatusNoContent)
 	}
@@ -108,7 +117,20 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Request failed!", http.StatusNoContent)
 	}
 
-	response := SinglePostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content}
+	comments, err := models.GetComments(db.DbConn, postId)
+	if err != nil {
+		log.Println("Cannot get comments", err)
+		http.Error(w, "Request failed!", http.StatusNoContent)
+	}
+
+	commentResponses := []CommentResponse{}
+
+	for _, comment := range comments {
+		commentResponses = append(commentResponses, CommentResponse{ID: comment.ID, PostID: comment.PostID, ParentCommentID: comment.ParentCommentID, Author: comment.Author, Content: comment.Content})
+	}
+
+	response := GetPostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content}
+	response.Comments = commentResponses
 
 	json, err := json.Marshal(response)
 	if err != nil {

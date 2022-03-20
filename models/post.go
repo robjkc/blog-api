@@ -11,6 +11,14 @@ type Post struct {
 	Content string `db:"content"`
 }
 
+type Comment struct {
+	ID              int    `db:"id"`
+	PostID          int    `db:"post_id"`
+	ParentCommentID int    `db:"parent_comment_id"`
+	Author          string `db:"author"`
+	Content         string `db:"content"`
+}
+
 func GetPosts(con *db.DbConnection) ([]Post, error) {
 
 	posts := []Post{}
@@ -39,6 +47,23 @@ func GetPost(con *db.DbConnection, id int) (Post, error) {
 	}
 
 	return posts[0], nil
+}
+
+func GetComments(con *db.DbConnection, postId int) ([]Comment, error) {
+
+	comments := []Comment{}
+	err := con.ExecuteSelect(&comments, `select c.id,
+		c.post_id,
+		cc.parent_comment_id,
+		c.author,
+		c.content
+		from comments c join child_comments cc on c.id = cc.child_comment_id
+		where post_id = :postId order by cc.parent_comment_id`, db.Args{"postId": postId})
+	if err != nil {
+		return nil, err
+	}
+
+	return comments, nil
 }
 
 func AddPost(con *db.DbConnection, author string, title string, content string) error {
