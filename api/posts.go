@@ -19,6 +19,13 @@ type PostResponse struct {
 	Content string `json:"content"`
 }
 
+type SinglePostResponse struct {
+	ID      int    `json:"id"`
+	Author  string `json:"author"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
 type AddPostRequest struct {
 	Author  string `json:"author"`
 	Title   string `json:"title"`
@@ -78,6 +85,30 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 	for _, post := range posts {
 		response = append(response, PostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content})
 	}
+
+	json, err := json.Marshal(response)
+	if err != nil {
+		http.Error(w, "Request failed!", http.StatusNoContent)
+	}
+	w.Write(json)
+}
+
+func GetPost(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	postId, err := strconv.Atoi(params["postId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	post, err := models.GetPost(db.DbConn, postId)
+	if err != nil {
+		log.Println("Cannot get post", err)
+		http.Error(w, "Request failed!", http.StatusNoContent)
+	}
+
+	response := SinglePostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content}
 
 	json, err := json.Marshal(response)
 	if err != nil {

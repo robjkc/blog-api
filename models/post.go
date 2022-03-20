@@ -26,6 +26,21 @@ func GetPosts(con *db.DbConnection) ([]Post, error) {
 	return posts, nil
 }
 
+func GetPost(con *db.DbConnection, id int) (Post, error) {
+
+	posts := []Post{}
+	err := con.ExecuteSelect(&posts, `select id,
+		title,
+		author,
+		content
+		from posts where id = :id`, db.Args{"id": id})
+	if err != nil {
+		return Post{}, err
+	}
+
+	return posts[0], nil
+}
+
 func AddPost(con *db.DbConnection, author string, title string, content string) error {
 	err := con.ExecuteUpdate(`insert into posts (author, title, content) values (:author, :title, :content)`,
 		db.Args{"author": author, "title": title, "content": content})
