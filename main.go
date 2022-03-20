@@ -22,9 +22,10 @@ func main() {
 	router.HandleFunc("/", handler)
 	router.HandleFunc("/posts", api.GetPosts).Methods(http.MethodGet)
 	router.HandleFunc("/posts", api.AddPost).Methods(http.MethodPost)
-	router.HandleFunc("/posts/{postId}", api.GetPost).Methods(http.MethodGet)
 	router.HandleFunc("/posts/{postId}", api.UpdatePost).Methods(http.MethodPut)
 	router.HandleFunc("/posts/{postId}", api.DeletePost).Methods(http.MethodDelete)
+	router.HandleFunc("/posts/{postId}", api.GetPost).Methods(http.MethodGet)
+	router.HandleFunc("/posts/{postId}/comments", api.AddComment).Methods(http.MethodPost)
 
 	log.Println("Listening for connections on port: 8080")
 

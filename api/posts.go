@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"net/url"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -45,40 +44,6 @@ type UpdatePostRequest struct {
 	Author  string `json:"author"`
 	Title   string `json:"title"`
 	Content string `json:"content"`
-}
-
-func (r *AddPostRequest) validate() url.Values {
-	errors := url.Values{}
-
-	if r.Author == "" {
-		errors.Add("author", "The author field is required")
-	}
-
-	if r.Title == "" {
-		errors.Add("title", "The title field is required")
-	}
-
-	if r.Content == "" {
-		errors.Add("content", "The content field is required")
-	}
-	return errors
-}
-
-func (r *UpdatePostRequest) validate() url.Values {
-	errors := url.Values{}
-
-	if r.Author == "" {
-		errors.Add("author", "The author field is required")
-	}
-
-	if r.Title == "" {
-		errors.Add("title", "The title field is required")
-	}
-
-	if r.Content == "" {
-		errors.Add("content", "The content field is required")
-	}
-	return errors
 }
 
 func GetPosts(w http.ResponseWriter, r *http.Request) {
@@ -159,12 +124,6 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-}
-
-func onValidationError(errors url.Values, w http.ResponseWriter) {
-	err := map[string]interface{}{"validationError": errors}
-	w.WriteHeader(http.StatusBadRequest)
-	json.NewEncoder(w).Encode(err)
 }
 
 func UpdatePost(w http.ResponseWriter, r *http.Request) {

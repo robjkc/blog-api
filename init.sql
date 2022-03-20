@@ -8,9 +8,9 @@ create table if not exists posts (
 
 create table if not exists comments (
 	id serial primary key,
+	post_id int not null,
 	author varchar(100) not null,
 	content varchar(1000) not null,
-	post_id int not null,
     create_date timestamp default now()
 );
 
