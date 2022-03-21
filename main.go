@@ -37,13 +37,6 @@ func main() {
 	log.Println("Listening for connections on port: 8080")
 
 	http.ListenAndServe(":8080", router)
-
-	/*
-		r.HandleFunc("/users/", listUsers).Methods(http.MethodGet)
-		r.HandleFunc("/users/", createUser).Methods(http.MethodPost)
-		r.HandleFunc("/users/{userId}/", getUser).Methods(http.MethodGet)
-		r.HandleFunc("/users/{userId}/", updateUser).Methods(http.MethodPut)
-		r.HandleFunc("/users/{userId}/", deleteUser).Methods(Http.MethodDelete)*/
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
