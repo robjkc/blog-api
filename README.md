@@ -107,3 +107,28 @@ Body:
 	"content": "Auth Testing"
 }
 ```
+
+**Database tables**
+```
+create table if not exists posts (
+	id serial primary key,
+	title varchar(100) not null,
+	author varchar(100) not null,
+	content varchar(1000) not null,
+    create_date timestamp default now()
+);
+
+create table if not exists comments (
+	id serial primary key,
+	post_id int references posts(id) on delete cascade,
+	top_level int default 1 not null,
+	author varchar(100) not null,
+	content varchar(1000) not null,
+    create_date timestamp default now()
+);
+
+create table if not exists child_comments (
+	parent_comment_id int references comments(id) on delete cascade,
+	child_comment_id int references comments(id) on delete cascade
+);
+```
