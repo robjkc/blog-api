@@ -9,6 +9,7 @@ sudo docker build -t blog-api .
 docker-compose up
 
 **Example Endpoints**
+```
 GET http://localhost:8080/posts
 
 GET http://localhost:8080/posts/1
@@ -52,8 +53,10 @@ Body:
 	"author": "Robert",
 	"content": "Test Comment Update"
 }
+```
 
 **Endpoints w/Auth**
+```
 POST http://localhost:8080/login
 {
 	"username": "admin",
@@ -68,3 +71,4 @@ Body:
 	"title": "Test",
 	"content": "Auth Testing"
 }
+```
