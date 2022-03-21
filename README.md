@@ -2,7 +2,7 @@
 
 **Steps to run**
 
-1. Start a preloaded postgres database using docker-compose (from the root directory). The preloaded data is in the init.sql file.
+1. Start a preloaded postgres database using docker-compose (from the root directory). The preloaded data is in the init.sql file. You will need to install docker-compose.
 ```
 docker-compose up
 ```
