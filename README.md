@@ -10,10 +10,13 @@ docker-compose up
 
 **Example Endpoints**
 ```
+# Get All Posts
 GET http://localhost:8080/posts
 
+# Get Single Post with threaded comments
 GET http://localhost:8080/posts/1
 
+# Add a new post
 POST http://localhost:8080/posts
 Body:
 {
@@ -22,6 +25,7 @@ Body:
 	"content": "Testing "
 }
 
+# Add a new comment
 POST http://localhost:8080/comments
 Body:
 {
@@ -30,6 +34,7 @@ Body:
 	"content": "Test Comment"
 }
 
+# Add a new threaded comment
 POST http://localhost:8080/comments
 Body:
 {
@@ -39,6 +44,7 @@ Body:
 	"content": "Reply to Comment"
 }
 
+# Update a post
 PUT http://localhost:8080/posts/1
 Body:
 {
@@ -47,6 +53,7 @@ Body:
 	"content": "Test Post Update"
 }
 
+# Update a comment
 PUT http://localhost:8080/comments/1
 Body:
 {
@@ -57,12 +64,14 @@ Body:
 
 **Endpoints w/Auth**
 ```
+# Login a user
 POST http://localhost:8080/login
 {
 	"username": "admin",
 	"password": "admin"
 }
 
+# Add a new post with authorization (Use the auth token received from the Login)
 POST http://localhost:8080/postsAuth
 Header: Authorization Bearer <auth_token_from_login>
 Body:
