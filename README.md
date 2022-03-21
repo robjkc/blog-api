@@ -2,20 +2,19 @@
 
 **Steps to run**
 
-1. Start a preloaded postgres database using docker-compose (from the root directory).
+***1. Start a preloaded postgres database using docker-compose (from the root directory). The preloaded data is in the init.sql file.***
 ```
 docker-compose up
 ```
-Note: The preloaded data is in the init.sql file
 
-2. Start the blog-api from the command line.
+***2. Start the blog-api from the command line.***
 ```
 go run .
 ```
 
-**Optional steps to run with both the database and api using docker-compose **
+**Optional steps to run with both the database and api using docker-compose**
 
-1. Update db_connection.go by commenting out line 23 and adding a comment to line 24. This will change the host to "postgres" from "localhost".
+***1. Update db_connection.go by commenting out line 23 and adding a comment to line 24. This will change the host to "postgres" from "localhost".***
 ```
 
 	// Use the following line if you want to run the api with docker-compose. It sets the host to postgres instead of localhost.
@@ -23,19 +22,17 @@ go run .
 	db, err := sqlx.Connect("postgres", "user=postgres password=postgres host=localhost dbname=postgres sslmode=disable")
 ```
 
-2. Build the blog-api docker image.
+***2. Build the blog-api docker image.***
 ```
 sudo docker build -t blog-api .
 ```
 
-3. Remove the comments from the docker-compose.yml (Lines starting with #).
+***3. Remove the comments from the docker-compose.yml (Lines starting with #).***
 
-4. Run the docker-compose file. This will start both the database and the api.
+***4. Run the docker-compose file. This will start both the database and the api.***
 ```
 docker-compose up
 ```
-
-
 
 **Example Endpoints**
 ```
