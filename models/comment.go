@@ -1,16 +1,19 @@
 package models
 
 import (
+	"time"
+
 	"github.com/robjkc/blog-api/db"
 )
 
 type Comment struct {
-	ID              int    `db:"id"`
-	PostID          int    `db:"post_id"`
-	TopLevel        int    `db:"top_level"`
-	ParentCommentID int    `db:"parent_comment_id"`
-	Author          string `db:"author"`
-	Content         string `db:"content"`
+	ID              int       `db:"id"`
+	PostID          int       `db:"post_id"`
+	TopLevel        int       `db:"top_level"`
+	ParentCommentID int       `db:"parent_comment_id"`
+	Author          string    `db:"author"`
+	Content         string    `db:"content"`
+	CreateDate      time.Time `db:"create_date"`
 }
 
 func GetComments(con *db.DbConnection, postId int) ([]Comment, error) {
@@ -21,7 +24,8 @@ func GetComments(con *db.DbConnection, postId int) ([]Comment, error) {
 		c.top_level,
 		cc.parent_comment_id,
 		c.author,
-		c.content
+		c.content,
+		c.create_date
 		from comments c join child_comments cc on c.id = cc.child_comment_id
 		where post_id = :postId order by c.top_level desc, cc.parent_comment_id, c.create_date`, db.Args{"postId": postId})
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/robjkc/blog-api/db"
@@ -12,27 +13,30 @@ import (
 )
 
 type GetPostsResponse struct {
-	ID      int    `json:"id"`
-	Author  string `json:"author"`
-	Title   string `json:"title"`
-	Content string `json:"content"`
+	ID         int       `json:"id"`
+	Author     string    `json:"author"`
+	Title      string    `json:"title"`
+	Content    string    `json:"content"`
+	CreateDate time.Time `json:"create_date"`
 }
 
 type GetPostResponse struct {
-	ID       int               `json:"id"`
-	Author   string            `json:"author"`
-	Title    string            `json:"title"`
-	Content  string            `json:"content"`
-	Comments []CommentResponse `json:"comments"`
+	ID         int               `json:"id"`
+	Author     string            `json:"author"`
+	Title      string            `json:"title"`
+	Content    string            `json:"content"`
+	CreateDate time.Time         `json:"create_date"`
+	Comments   []CommentResponse `json:"comments"`
 }
 
 type CommentResponse struct {
-	ID              int    `json:"id"`
-	PostID          int    `json:"post_id"`
-	TopLevel        int    `json:"top_level"`
-	ParentCommentID int    `json:"parent_comment_id"`
-	Author          string `json:"author"`
-	Content         string `json:"content"`
+	ID              int       `json:"id"`
+	PostID          int       `json:"post_id"`
+	TopLevel        int       `json:"top_level"`
+	ParentCommentID int       `json:"parent_comment_id"`
+	Author          string    `json:"author"`
+	Content         string    `json:"content"`
+	CreateDate      time.Time `json:"create_date"`
 }
 
 type AddPostRequest struct {
@@ -58,7 +62,8 @@ func GetPosts(w http.ResponseWriter, r *http.Request) {
 	responses := []GetPostsResponse{}
 
 	for _, post := range posts {
-		responses = append(responses, GetPostsResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content})
+		responses = append(responses, GetPostsResponse{ID: post.ID, Author: post.Author, Title: post.Title,
+			Content: post.Content, CreateDate: post.CreateDate})
 	}
 
 	json, err := json.Marshal(responses)
@@ -94,11 +99,12 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 	for _, comment := range comments {
 		commentResponses = append(commentResponses, CommentResponse{ID: comment.ID, PostID: comment.PostID,
 			TopLevel: comment.TopLevel, ParentCommentID: comment.ParentCommentID, Author: comment.Author,
-			Content: comment.Content,
+			Content: comment.Content, CreateDate: comment.CreateDate,
 		})
 	}
 
-	response := GetPostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content}
+	response := GetPostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content,
+		CreateDate: post.CreateDate}
 	response.Comments = commentResponses
 
 	json, err := json.Marshal(response)

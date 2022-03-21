@@ -1,14 +1,17 @@
 package models
 
 import (
+	"time"
+
 	"github.com/robjkc/blog-api/db"
 )
 
 type Post struct {
-	ID      int    `db:"id"`
-	Title   string `db:"title"`
-	Author  string `db:"author"`
-	Content string `db:"content"`
+	ID         int       `db:"id"`
+	Title      string    `db:"title"`
+	Author     string    `db:"author"`
+	Content    string    `db:"content"`
+	CreateDate time.Time `db:"create_date"`
 }
 
 func GetPosts(con *db.DbConnection) ([]Post, error) {
@@ -17,7 +20,8 @@ func GetPosts(con *db.DbConnection) ([]Post, error) {
 	err := con.ExecuteSelect(&posts, `select id,
 		title,
 		author,
-		content
+		content,
+		create_date
 		from posts`, db.Args{})
 	if err != nil {
 		return nil, err
@@ -32,7 +36,8 @@ func GetPost(con *db.DbConnection, id int) (Post, error) {
 	err := con.ExecuteSelect(&posts, `select id,
 		title,
 		author,
-		content
+		content,
+		create_date
 		from posts where id = :id`, db.Args{"id": id})
 	if err != nil {
 		return Post{}, err
