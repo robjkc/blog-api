@@ -29,7 +29,7 @@ type GetPostResponse struct {
 type CommentResponse struct {
 	ID              int    `json:"id"`
 	PostID          int    `json:"post_id"`
-	Level           int    `json:"level"`
+	TopLevel        int    `json:"top_level"`
 	ParentCommentID int    `json:"parent_comment_id"`
 	Author          string `json:"author"`
 	Content         string `json:"content"`
@@ -93,8 +93,9 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 
 	for _, comment := range comments {
 		commentResponses = append(commentResponses, CommentResponse{ID: comment.ID, PostID: comment.PostID,
-			ParentCommentID: comment.ParentCommentID, Author: comment.Author, Content: comment.Content,
-			Level: comment.Level})
+			TopLevel: comment.TopLevel, ParentCommentID: comment.ParentCommentID, Author: comment.Author,
+			Content: comment.Content,
+		})
 	}
 
 	response := GetPostResponse{ID: post.ID, Author: post.Author, Title: post.Title, Content: post.Content}

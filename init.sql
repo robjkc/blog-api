@@ -9,9 +9,9 @@ create table if not exists posts (
 create table if not exists comments (
 	id serial primary key,
 	post_id int references posts(id) on delete cascade,
+	top_level int default 1 not null,
 	author varchar(100) not null,
 	content varchar(1000) not null,
-	level int not null default 1,
     create_date timestamp default now()
 );
 
@@ -40,17 +40,17 @@ insert into child_comments(parent_comment_id, child_comment_id) select comment_i
 update parent_comment set comment_id = currval('comments_id_seq') where id = 1;
 
 -- Add comment - 3 (parent 2)
-insert into comments(author, content, post_id, level) values('Robert', 'Thanks', currval('posts_id_seq'), 2);
+insert into comments(author, content, post_id, top_level) values('Robert', 'Thanks', currval('posts_id_seq'), 0);
 insert into child_comments(parent_comment_id, child_comment_id) select comment_id, currval('comments_id_seq') from parent_comment where id = 1;
 update parent_comment set comment_id = currval('comments_id_seq') where id = 1;
 
 -- Add comment - 4 (parent 3)
-insert into comments(author, content, post_id, level) values('Scott', 'You are welcome', currval('posts_id_seq'), 3);
+insert into comments(author, content, post_id, top_level) values('Scott', 'You are welcome', currval('posts_id_seq'), 0);
 insert into child_comments(parent_comment_id, child_comment_id) select comment_id, currval('comments_id_seq') from parent_comment where id = 1;
 --update parent_comment set comment_id = currval('comments_id_seq') where id = 1;
 
 -- Add comment - 5 (parent 3)
-insert into comments(author, content, post_id, level) values('TW', 'Same here', currval('posts_id_seq'), 3);
+insert into comments(author, content, post_id, top_level) values('TW', 'Same here', currval('posts_id_seq'), 0);
 insert into child_comments(parent_comment_id, child_comment_id) select comment_id, currval('comments_id_seq') from parent_comment where id = 1;
 update parent_comment set comment_id = currval('comments_id_seq') where id = 1;
 
@@ -69,6 +69,6 @@ update parent_comment set comment_id = currval('comments_id_seq') where id = 1;
 insert into child_comments(parent_comment_id, child_comment_id) select comment_id, currval('comments_id_seq') from parent_comment where id = 1;
 
 -- Add comment - 8 (parent 7)
-insert into comments(author, content, post_id, level) values('Scott', 'We need to sign some more', currval('posts_id_seq'), 2);
+insert into comments(author, content, post_id, top_level) values('Scott', 'We need to sign some more', currval('posts_id_seq'), 0);
 insert into child_comments(parent_comment_id, child_comment_id) select comment_id, currval('comments_id_seq') from parent_comment where id = 1;
 update parent_comment set comment_id = currval('comments_id_seq') where id = 1;
