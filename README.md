@@ -12,7 +12,7 @@ docker-compose up
 go run .
 ```
 
-**Optional steps to run with both the database and api using docker-compose**
+**Steps to run with both the database and api using docker-compose (Optional)**
 
 1. Update db_connection.go by commenting out line 23 and adding a comment to line 24. This will change the host to "postgres" from "localhost".
 ```
@@ -106,10 +106,4 @@ Body:
 	"title": "Test",
 	"content": "Auth Testing"
 }
-```
-
-**Docker Build Step (Optional):**
-
-```
-sudo docker build -t blog-api .
 ```
