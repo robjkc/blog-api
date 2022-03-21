@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -116,12 +115,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddPostWithAuth(w http.ResponseWriter, r *http.Request) {
-	authToken := r.Header.Get("Authorization")
-	authArr := strings.Split(authToken, " ")
-
-	if len(authArr) != 2 {
-		log.Println("Authentication header is invalid: " + authToken)
-		http.Error(w, "Request failed!", http.StatusUnauthorized)
+	if !ValidAuth(w, r) {
 		return
 	}
 

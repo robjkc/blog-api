@@ -23,13 +23,16 @@ func main() {
 	router.HandleFunc("/login", api.Login)
 	router.HandleFunc("/posts", api.GetPosts).Methods(http.MethodGet)
 	router.HandleFunc("/posts", api.AddPost).Methods(http.MethodPost)
-	router.HandleFunc("/postsAuth", api.AddPostWithAuth).Methods(http.MethodPost)
 	router.HandleFunc("/posts/{postId}", api.UpdatePost).Methods(http.MethodPut)
 	router.HandleFunc("/posts/{postId}", api.DeletePost).Methods(http.MethodDelete)
 	router.HandleFunc("/posts/{postId}", api.GetPost).Methods(http.MethodGet)
 	router.HandleFunc("/comments", api.AddComment).Methods(http.MethodPost)
 	router.HandleFunc("/comments/{commentId}", api.DeleteComment).Methods(http.MethodDelete)
 	router.HandleFunc("/comments/{commentId}", api.UpdateComment).Methods(http.MethodPut)
+
+	postsAuth := router.Methods(http.MethodPost).Subrouter()
+	postsAuth.HandleFunc("/postsAuth", api.AddPostWithAuth)
+	postsAuth.Use(api.MiddlewareValidateAccessToken)
 
 	log.Println("Listening for connections on port: 8080")
 
