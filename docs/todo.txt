@@ -1,2 +1,0 @@
-- add on delete cascades
-- don't allow delete on comment that has children
