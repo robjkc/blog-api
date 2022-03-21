@@ -66,3 +66,13 @@ func AddComment(con *db.DbConnection, postId int, parentCommentId int, author st
 
 	return nil
 }
+
+func DeleteComment(con *db.DbConnection, commentId int) error {
+	err := con.ExecuteUpdate(`delete from comments where id = :commentId`,
+		db.Args{"commentId": commentId})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
