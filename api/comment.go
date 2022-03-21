@@ -12,7 +12,7 @@ import (
 )
 
 type AddCommentRequest struct {
-	ParentCommentID int    `json:"parrent_comment_id"`
+	ParentCommentID int    `json:"parent_comment_id"`
 	Author          string `json:"author"`
 	Content         string `json:"content"`
 }
@@ -41,7 +41,7 @@ func AddComment(w http.ResponseWriter, r *http.Request) {
 
 	err = models.AddComment(db.DbConn, postId, request.ParentCommentID, request.Author, request.Content)
 	if err != nil {
-		log.Println("Cannot add post", err)
+		log.Println("Cannot add comment", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
