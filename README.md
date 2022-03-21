@@ -1,12 +1,16 @@
 # blog-api
 
-**Docker Build Steps:**
+**Steps to run**
 
-sudo docker build -t blog-api .
+***1. Start a preloaded postgres database using docker-compose ***
 
-**Docker Compose Steps (from root directory):**
 
+***Docker Compose Steps (from root directory):***
+
+
+```
 docker-compose up
+```
 
 **Example Endpoints**
 ```
@@ -80,4 +84,10 @@ Body:
 	"title": "Test",
 	"content": "Auth Testing"
 }
+```
+
+**Docker Build Step (Optional):**
+
+```
+sudo docker build -t blog-api .
 ```

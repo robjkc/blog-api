@@ -19,7 +19,9 @@ var (
 )
 
 func ConnectDb() error {
-	db, err := sqlx.Connect("postgres", "user=postgres password=postgres host=postgres dbname=postgres sslmode=disable")
+	// Use the following line if you want to run the api with docker-compose. It sets the host to postgres instead of localhost.
+	//db, err := sqlx.Connect("postgres", "user=postgres password=postgres host=postgres dbname=postgres sslmode=disable")
+	db, err := sqlx.Connect("postgres", "user=postgres password=postgres host=localhost dbname=postgres sslmode=disable")
 	if err != nil {
 		return err
 	}
