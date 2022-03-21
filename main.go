@@ -27,6 +27,7 @@ func main() {
 	router.HandleFunc("/posts/{postId}", api.GetPost).Methods(http.MethodGet)
 	router.HandleFunc("/comments", api.AddComment).Methods(http.MethodPost)
 	router.HandleFunc("/comments/{commentId}", api.DeleteComment).Methods(http.MethodDelete)
+	router.HandleFunc("/comments/{commentId}", api.UpdateComment).Methods(http.MethodPut)
 
 	log.Println("Listening for connections on port: 8080")
 

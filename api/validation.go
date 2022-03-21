@@ -58,3 +58,16 @@ func (r *AddCommentRequest) validate() url.Values {
 	}
 	return errors
 }
+
+func (r *UpdateCommentRequest) validate() url.Values {
+	errors := url.Values{}
+
+	if r.Author == "" {
+		errors.Add("author", "The author field is required")
+	}
+
+	if r.Content == "" {
+		errors.Add("content", "The content field is required")
+	}
+	return errors
+}

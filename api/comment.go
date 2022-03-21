@@ -18,6 +18,11 @@ type AddCommentRequest struct {
 	Content         string `json:"content"`
 }
 
+type UpdateCommentRequest struct {
+	Author  string `json:"author"`
+	Content string `json:"content"`
+}
+
 func AddComment(w http.ResponseWriter, r *http.Request) {
 
 	var request AddCommentRequest
@@ -53,6 +58,36 @@ func DeleteComment(w http.ResponseWriter, r *http.Request) {
 	err = models.DeleteComment(db.DbConn, commentId)
 	if err != nil {
 		log.Println("Cannot delete comment", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
+func UpdateComment(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	commentId, err := strconv.Atoi(params["commentId"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var request UpdateCommentRequest
+
+	err = json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if errors := request.validate(); len(errors) > 0 {
+		onValidationError(errors, w)
+		return
+	}
+
+	err = models.UpdateComment(db.DbConn, commentId, request.Author, request.Content)
+	if err != nil {
+		log.Println("Cannot update comment", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

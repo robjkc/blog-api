@@ -73,3 +73,13 @@ func DeleteComment(con *db.DbConnection, commentId int) error {
 
 	return nil
 }
+
+func UpdateComment(con *db.DbConnection, id int, author string, content string) error {
+	err := con.ExecuteUpdate(`update comments set author = :author, content = :content where id = :id`,
+		db.Args{"id": id, "author": author, "content": content})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
