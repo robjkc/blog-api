@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -112,6 +113,37 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Request failed!", http.StatusNoContent)
 	}
 	w.Write(json)
+}
+
+func AddPostWithAuth(w http.ResponseWriter, r *http.Request) {
+	authToken := r.Header.Get("Authorization")
+	authArr := strings.Split(authToken, " ")
+
+	if len(authArr) != 2 {
+		log.Println("Authentication header is invalid: " + authToken)
+		http.Error(w, "Request failed!", http.StatusUnauthorized)
+		return
+	}
+
+	var request AddPostRequest
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if errors := request.validate(); len(errors) > 0 {
+		onValidationError(errors, w)
+		return
+	}
+
+	err = models.AddPost(db.DbConn, request.Author, request.Title, request.Content)
+	if err != nil {
+		log.Println("Cannot add post", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
 
 func AddPost(w http.ResponseWriter, r *http.Request) {

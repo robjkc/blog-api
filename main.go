@@ -20,8 +20,10 @@ func main() {
 	router.Use(commonMiddleware)
 
 	router.HandleFunc("/", handler)
+	router.HandleFunc("/login", api.Login)
 	router.HandleFunc("/posts", api.GetPosts).Methods(http.MethodGet)
 	router.HandleFunc("/posts", api.AddPost).Methods(http.MethodPost)
+	router.HandleFunc("/postsAuth", api.AddPostWithAuth).Methods(http.MethodPost)
 	router.HandleFunc("/posts/{postId}", api.UpdatePost).Methods(http.MethodPut)
 	router.HandleFunc("/posts/{postId}", api.DeletePost).Methods(http.MethodDelete)
 	router.HandleFunc("/posts/{postId}", api.GetPost).Methods(http.MethodGet)
